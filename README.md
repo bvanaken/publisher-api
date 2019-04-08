@@ -9,5 +9,5 @@ API for online user comment analysis
 - pytorch-pretrained-bert 0.6.1
 
 ## How to run
-- Add model files to a directory called "models"
-- Run app.py
+- Store model files named 'bert_large_toxic.bin', 'bert_config.json', 'toxic_fasttext.bin' and 'toxic_fasttext_de.bin' in $MODEL_DIR
+- Run 'app.py $MODEL_DIR'
