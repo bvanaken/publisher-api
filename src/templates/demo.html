@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>NOHATE Demo</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  </head>
+
+  <body class="bg-light">
+
+    <div class="container">
+      <div class="py-5 text-center">
+        <h2>NOHATE Demo</h2>
+        <p class="lead">Insert a text to check for potential Hatespeech.</p>
+      </div>
+
+      <!-- <div class="row">
+        <div class="col-md-4 order-md-2 mb-4">
+          <h4 class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted">Info</span>
+          </h4>
+          <ul class="list-group mb-3">
+            <li class="list-group-item d-flex justify-content-between bg-info">
+              <div>
+                <h6 class="my-0">Fasttext Model</h6>
+                <small class="text-muted">English</small>
+              </div>
+              <span class="text-muted">F1: 0.77</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <div>
+                <h6 class="my-0">BERT Model</h6>
+                <small class="text-muted">English</small>
+              </div>
+              <span class="text-muted">F1: 0.82</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <div>
+                <h6 class="my-0">Fasttext Model</h6>
+                <small class="text-muted">German</small>
+              </div>
+              <span class="text-muted">F1: 0.57</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <div>
+                <h6 class="my-0">BERT Model</h6>
+                <small>German</small>
+              </div>
+              <span class="text-muted">F1: 0.65</span>
+            </li>
+          </ul>
+        </div> -->
+        <!-- <div class="col-md-8 order-md-1"> -->
+
+          	<div class="row" style="margin:15px;">
+				<div class="form-check form-check-inline">
+				  <input class="form-check-input" type="radio" name="langOptions" id="eng-radio" checked="1">
+				  <label class="form-check-label" for="eng-radio"><img width="20" height="15" src="https://live.staticflickr.com/7880/47482420262_900fdaaf6f_t.jpg"></label>
+				</div>
+				<div class="form-check form-check-inline">
+				  <input class="form-check-input" type="radio" name="langOptions" id="de-radio">
+				  <label class="form-check-label" for="de-radio"><img width="20" height="15" src="https://live.staticflickr.com/7822/47482420212_6ed1dffc18_t.jpg"></label>
+				</div>
+			</div>
+			<div class="row" style="margin:15px;">
+				<div class="form-check form-check-inline">
+				  <input class="form-check-input" type="radio" name="modelOptions" id="ft-radio" value="option1" checked="1">
+				  <label class="form-check-label" for="ft-radio">Fasttext</label>
+				</div>
+				<div class="form-check form-check-inline">
+				  <input class="form-check-input" type="radio" name="modelOptions" id="bert-radio" value="option2">
+				  <label class="form-check-label" for="bert-radio">BERT (slow)</label>
+				</div>
+			</div>
+			<div class="row form-group" style="margin:10px;">
+    			<textarea class="form-control" id="input-text" rows="6"></textarea>
+  			</div>
+            <!-- <hr class="mb-4"> -->
+            <button class="btn btn-primary btn-lg btn-block" onclick="predict()">Predict</button>
+			<img id="loading" src="https://media.giphy.com/media/3o7TKtnuHOHHUjR38Y/giphy.gif" width="20" height="20" style="margin-top:40px;display: none;">
+	        <div class="row" id="result" style="display: none;margin:10px;">
+		        <div class="card-body" style="background-color: white;margin-top: 40px;">
+	            <h4 class="card-title pricing-card-title" id="prob"></h4>
+	            <span id="result-text"></span>
+	          </div>
+	  	    </div>
+        </div>
+
+      <!-- </div> -->
+
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    <script>
+    	function trim(s){ 
+		  return ( s || '' ).replace( /^\s+|\s+$/g, '' ); 
+		}
+    	function predict(){
+    		text = $("#input-text").val()
+    		text = trim(text)
+
+    		if($('#bert-radio').is(':checked')){
+    			model = "bert"
+    		} else {
+    			model = "ft"
+    		}
+
+    		if($('#eng-radio').is(':checked')){
+    			lang = "eng"
+    		} else {
+    			lang = "de"
+    		}
+
+    		if(text !== ""){
+    		    $( "#result" ).hide()
+    		    $( "#loading" ).show()
+				text = text.replace(/\n/g, " ");
+				console.log(text)
+				$.ajax({
+				    url: '/nohate/predict',
+				    type: 'post',
+				    data: "{\"query\": \"" + text + "\", \"model\": \"" + model + "\", \"lang\": \"" + lang + "\"}",
+				    headers: {
+				        'Content-Type': 'application/json'
+				    },
+				    dataType: 'json',
+				    success: function (data) {
+				        console.info(data);
+				        hate_prob = 0;
+				        if(data.prediction == "1" || data.prediction == "hate"){
+				            console.info("hate");
+				        	hate_prob = data.probability
+							console.info(hate_prob);
+
+				        } else if(data.prediction == "0" || data.prediction == "nohate"){
+				            console.info("nohate");
+				        	hate_prob = 1 - data.probability
+							console.info(hate_prob);
+				        }
+				        $( "#loading" ).hide()
+				        $( "#result" ).show()
+				        $( "#prob" ).html( hate_prob.toFixed(2) + " <small class=\"text-muted\">Hate Probability<small>");
+				        $( "#result-text" ).html( data.text ); 
+				    }
+				});
+    		}
+		}
+		$( document ).ready(function() {
+		    $('#de-radio').click(function() {
+		    	$("#ft-radio").prop('checked', true);
+			  	$("#bert-radio").attr("disabled", true);
+			});
+			$('#eng-radio').click(function() {
+			  	$("#bert-radio").removeAttr("disabled");
+			});
+		});
+    </script>
+  </body>
+</html>

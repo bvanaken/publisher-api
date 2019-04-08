@@ -1,10 +1,8 @@
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 import torch
 from pytorch_pretrained_bert.modeling import BertForSequenceClassification, BertConfig
-import numpy as np
+import os
 
-model_config_file = "models/bert_config.json"
-model_file = "models/bert_large_toxic.bin"
 bert_model = "bert-large-cased"
 num_labels = 2
 max_seq_length = 200
@@ -28,7 +26,7 @@ class InputFeatures(object):
         self.segment_ids = segment_ids
 
 
-def load_model():
+def load_model(model_file, model_config_file):
     # Load a trained model and config that have been fine-tuned
     config = BertConfig(model_config_file)
     model = BertForSequenceClassification(config, num_labels=num_labels)
@@ -54,7 +52,9 @@ def predict(text):
     with torch.no_grad():
         logits = model(input_features[0], input_features[1], input_features[2])
 
-        prediction = np.argmax(logits.numpy(), axis=1).item()
+        _, indices = torch.max(logits, 1)
+
+        prediction = indices.item()
 
         softmax_result = softmax(logits)
         probability = softmax_result[0][prediction].item()
@@ -101,8 +101,16 @@ def convert_example_to_features(example, max_seq_length, tokenizer):
                          segment_ids=segment_ids)
 
 
-softmax = torch.nn.Softmax(dim=1)
-tokenizer = BertTokenizer.from_pretrained(bert_model, do_lower_case=False)
+def init(model_dir):
+    global model
+    global tokenizer
+    global softmax
 
-model = load_model()
-model.eval()
+    model_config_file = os.path.join(model_dir, "bert_config.json")
+    model_file = os.path.join(model_dir, "bert_large_toxic.bin")
+
+    softmax = torch.nn.Softmax(dim=1)
+    tokenizer = BertTokenizer.from_pretrained(bert_model, do_lower_case=False)
+
+    model = load_model(model_file, model_config_file)
+    model.eval()

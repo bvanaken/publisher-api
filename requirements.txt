@@ -1,0 +1,5 @@
+Flask
+fasttext
+pytorch-pretrained-bert
+torch
+waitress
