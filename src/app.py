@@ -6,6 +6,8 @@ import logging
 import waitress
 import os
 import argparse
+import datetime
+import database as db
 
 FORMAT = '%(asctime)-15s %(message)s'
 logging.basicConfig(format=FORMAT, level=os.environ.get("LOGLEVEL", "INFO"))
@@ -29,6 +31,12 @@ def get_prediction():
     data = request.get_json()
 
     input_text = data['query']
+    print(input_text)
+
+    label = "placeholder"
+
+    currentDT = datetime.datetime.now()
+    db.insertRow(input_text, currentDT, label )
 
     model = data['model'] if 'model' in data else "ft"
     lang = data['lang'] if 'lang' in data else "eng"
