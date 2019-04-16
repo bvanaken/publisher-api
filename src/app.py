@@ -31,12 +31,12 @@ def get_prediction():
     data = request.get_json()
 
     input_text = data['query']
-    print(input_text)
+    logger.debug("input: {}".format(input_text))
 
-    label = "placeholder"
+    label = ""
 
-    currentDT = datetime.datetime.now()
-    db.insertRow(input_text, currentDT, label )
+    current_dt = datetime.datetime.now()
+    db.insert_comment(input_text, current_dt, label )
 
     model = data['model'] if 'model' in data else "ft"
     lang = data['lang'] if 'lang' in data else "eng"
