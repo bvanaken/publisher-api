@@ -3,3 +3,4 @@ fasttext
 pytorch-pretrained-bert
 torch
 waitress
+mysql
