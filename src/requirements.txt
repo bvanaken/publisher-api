@@ -4,3 +4,4 @@ pytorch-pretrained-bert
 torch
 waitress
 mysql
+mysql-connector-python
