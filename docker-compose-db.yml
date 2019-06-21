@@ -1,13 +1,16 @@
 version: '3'
 
 services:
- # nohate_app:
- #  build: .
- #  container_name: container_app
- #  links:
- #    - nohate_db
- #  expose:
- #    - "1337"
+ nohate_app:
+  build: .
+  depends_on:
+    - nohate_db
+  container_name: container_app
+  links:
+    - nohate_db
+  # ports:
+  #   - "3308:3306"
+
 
  nohate_db:
   image: mysql
@@ -15,6 +18,5 @@ services:
   environment:
    MYSQL_ROOT_PASSWORD: freiheit2018
    MYSQL_DATABASE: nohate_db
-
   ports:
-   - "3308:3306"
+    - "3308:3306"

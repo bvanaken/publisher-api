@@ -10,8 +10,8 @@ nohate_db = mysql.connector.connect(
     )
 
 cursor = nohate_db.cursor()
-# new_table = cursor.execute("CREATE TABLE comments(sID INTEGER AUTO_INCREMENT PRIMARY KEY, command TEXT, date DATETIME)")
-#
+new_table = cursor.execute("CREATE TABLE comments(sID INTEGER AUTO_INCREMENT PRIMARY KEY, command TEXT, date DATETIME)")
+
 def insert_comment(command, date, label):
     insert_command = "INSERT INTO comments(command, date, label) VALUES(%s, %s, %s)"
     row_input = (command, date, label)
