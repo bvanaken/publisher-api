@@ -1,11 +1,13 @@
 import mysql.connector
 import logging
+import os
+print()
 
 nohate_db = mysql.connector.connect(
-    host="nohate-mysql",
+    host=os.environ['MYSQL_HOST'],
     user="root",
-    passwd="nohate2019",
-    database="nohate",
+    passwd=os.environ['MYSQL_ROOT_PASSWORD'],
+    database=os.environ['MYSQL_DB_NAME'],
 )
 
 cursor = nohate_db.cursor()
