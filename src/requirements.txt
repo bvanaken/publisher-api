@@ -1,5 +1,7 @@
 Flask
-fasttext
+fasttext==0.8.3
 pytorch-pretrained-bert
 torch
 waitress
+mysql
+mysql-connector-python

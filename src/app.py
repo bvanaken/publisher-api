@@ -6,6 +6,8 @@ import logging
 import waitress
 import os
 import argparse
+import datetime
+import db
 
 FORMAT = '%(asctime)-15s %(message)s'
 logging.basicConfig(format=FORMAT, level=os.environ.get("LOGLEVEL", "INFO"))
@@ -33,6 +35,9 @@ def get_prediction():
     model = data['model'] if 'model' in data else "ft"
     lang = data['lang'] if 'lang' in data else "eng"
 
+    current_datetime = datetime.datetime.now()
+    comment_id = db.insert_comment(input_text, current_datetime, lang)
+
     if model == "ft":
         prediction, probability = fasttext_model.predict(input_text, lang)
     elif model == "bert":
@@ -50,7 +55,26 @@ def get_prediction():
     output = {
         'text': input_text,
         'prediction': str(prediction),
-        'probability': probability
+        'probability': probability,
+        'comment_id': comment_id
+    }
+
+    return jsonify(output)
+
+
+@app.route(base_route + "/label", methods=['POST'])
+def update_label():
+
+    data = request.get_json()
+
+    comment_id = data['comment_id']
+    label = data['label']
+
+    comment_id = db.update_comment(comment_id, label)
+
+    output = {
+        'comment_id': comment_id,
+        'label': label
     }
 
     return jsonify(output)
