@@ -90,12 +90,6 @@ def convert_example_to_features(example, max_seq_length, tokenizer):
     assert len(input_mask) == max_seq_length
     assert len(segment_ids) == max_seq_length
 
-    print("*** Example ***")
-    print("tokens: %s" % " ".join([str(x) for x in tokens]))
-    print("input_ids: %s" % " ".join([str(x) for x in input_ids]))
-    print("input_mask: %s" % " ".join([str(x) for x in input_mask]))
-    print("segment_ids: %s" % " ".join([str(x) for x in segment_ids]))
-
     return InputFeatures(input_ids=input_ids,
                          input_mask=input_mask,
                          segment_ids=segment_ids)

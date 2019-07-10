@@ -7,7 +7,7 @@ nohate_db = mysql.connector.connect(
     host=os.environ['MYSQL_HOST'],
     user="root",
     passwd=os.environ['MYSQL_ROOT_PASSWORD'],
-    database=os.environ['MYSQL_DB_NAME'],
+    database=os.environ['MYSQL_DB_NAME']
 )
 
 cursor = nohate_db.cursor()
