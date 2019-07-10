@@ -24,7 +24,7 @@ def init(model_dir):
     global model_de
 
     model_file_eng = os.path.join(model_dir, "toxic_fasttext.bin")
-    model_file_de = os.path.join(model_dir, "toxic_fasttext_de.bin")
+    model_file_de = os.path.join(model_dir, "toxic_fasttext_de_v2.bin")
 
     model_eng = load_model(model_file_eng)
     model_de = load_model(model_file_de)
