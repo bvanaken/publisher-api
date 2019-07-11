@@ -1,7 +1,6 @@
 import mysql.connector
 import logging
 import os
-print()
 
 nohate_db = mysql.connector.connect(
     host=os.environ['MYSQL_HOST'],
@@ -21,15 +20,17 @@ def duplicate_prev_id(text, lang):
 
     result = cursor.fetchone()
 
-    prev_text = result[1]
-    prev_lang = result[2]
+    if result is not None:
 
-    logging.debug("text_from_id_command: " + str(result))
+        prev_text = result[1]
+        prev_lang = result[2]
 
-    if text == prev_text and lang == prev_lang:
-        return result[0]
-    else:
-        return None
+        logging.debug("text_from_id_command: " + str(result))
+
+        if text == prev_text and lang == prev_lang:
+            return result[0]
+
+    return None
 
 
 def insert_comment(text, date, lang, label=-1):

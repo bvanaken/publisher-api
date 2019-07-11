@@ -230,8 +230,11 @@
             $("#result").hide();
             $("#loading").show();
 
-            // Remove linebreaks in input
+            // Remove linebreaks from input
             text = text.replace(/\n/g, " ");
+
+            // Remove quotes from input
+            text = text.replace("\"", "'");
 
             console.log(text);
 
