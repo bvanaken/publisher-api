@@ -66,7 +66,7 @@
       </div> -->
     <!-- <div class="col-md-8 order-md-1"> -->
 
-    <div class="row" style="margin:15px;">
+    <div class="row" style="margin: 15px 15px 15px 5px;">
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="langOptions" id="eng-radio" checked="1">
             <label class="form-check-label" for="eng-radio"><img width="20" height="15"
@@ -78,7 +78,7 @@
                                                                 src="https://live.staticflickr.com/7822/47482420212_6ed1dffc18_t.jpg"></label>
         </div>
     </div>
-    <div class="row" style="margin:15px;">
+    <div class="row" style="margin: 15px 15px 15px 5px;">
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="modelOptions" id="ft-radio" value="option1" checked="1">
             <label class="form-check-label" for="ft-radio">Fasttext</label>
@@ -88,10 +88,13 @@
             <label class="form-check-label" for="bert-radio">BERT (slow)</label>
         </div>
     </div>
-    <div class="row form-group" style="margin:10px;">
+    <div class="row form-group" style="width:100%; margin-left: 0; margin-right: 0; margin-bottom: 5pt;">
         <textarea class="form-control" id="input-text" rows="6"></textarea>
     </div>
-
+    <div class="form-check" style="margin-bottom: 5pt;" hidden>
+    <input type="checkbox" class="form-check-input" id="save-text-checkbox" checked>
+    <small class="form-check-label">Input can be stored for further research</small>
+    </div>
     <button class="btn btn-primary btn-lg btn-block" onclick="predict()">Predict</button>
     <img id="loading" src="https://media.giphy.com/media/3o7TKtnuHOHHUjR38Y/giphy.gif" width="20" height="20"
          style="margin-top:40px;display: none;">
