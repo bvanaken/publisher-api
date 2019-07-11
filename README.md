@@ -1,18 +1,28 @@
 # publisher-api
-API for online user comment analysis
+API and Demo for online user comment analysis
 
 ## Dependencies
-* numpy 1.16.2
-* torch 1.0.1
-* Cython 0.29.6
-* fasttext 0.8.3
-* pytorch-pretrained-bert 0.6.1
+See [requirements.txt](./src/)
 
 ## How to run
+Run app within Kubernetes.
+### Model files
 * Store model files named 
   * `bert_large_toxic.bin`, 
   * `bert_config.json`, 
   * `toxic_fasttext.bin` and 
   * `toxic_fasttext_de.bin` 
-in `$MODEL_DIR`
-- Run `app.py $MODEL_DIR`
+in directory `${MODEL_DIR}` (must be accessible from container)
+* Build docker image with `docker build --build-arg MODEL_DIR=${MODEL_DIR} -t ${...} .`
+
+### Database
+* Create a secret `nohate-mysql-secret` that holds the key `root_password` for the MySQL database
+* Set up MYSQL with YAML files in [k8/mysql](./k8/mysql/)
+* Create a database named `nohate` with a `comments` table as follows:
+
+`CREATE DATABASE nohate;`
+
+`CREATE TABLE comments(id INTEGER AUTO_INCREMENT PRIMARY KEY, text TEXT, date DATETIME, label INTEGER, lang TEXT);`
+
+### Deploy
+* Deploy app (and required services) with YAML files in [k8](./k8/)

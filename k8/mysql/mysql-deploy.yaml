@@ -1,0 +1,36 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nohate-mysql
+spec:
+  selector:
+    matchLabels:
+      app: nohate-mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nohate-mysql
+    spec:
+      containers:
+      - image: mysql:5.6
+        name: nohate-mysql
+        env:
+          # Change to secrets
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+              secretKeyRef:
+                name: nohate-mysql-secret
+                key: root_password
+        ports:
+        - containerPort: 3306
+          name: nohate-mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: nohate-db-claim

@@ -164,7 +164,7 @@
         let comment_id = $("#result-text").data("comment_id");
 
         update_label(comment_id, 0);
-        console.log("labeled hate for comment id: " + comment_id);
+        console.log("labeled nohate for comment id: " + comment_id);
     }
 
     function get_selected_model() {
@@ -237,7 +237,7 @@
             text = text.replace(/\n/g, " ");
 
             // Remove quotes from input
-            text = text.replace("\"", "'");
+            text = text.replace(/\"/g, "'");
 
             console.log(text);
 

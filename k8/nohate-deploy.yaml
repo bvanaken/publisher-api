@@ -1,0 +1,44 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nohate-api
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nohate-api
+    spec:
+      containers:
+        - name: nohate-api
+          image: registry.datexis.com/bvanaken/nohate-api:v1.2
+          imagePullPolicy: Always
+          ports:
+            - name: client-port
+              containerPort: 1337
+          resources:
+            requests:
+              memory: 10Gi
+              cpu: 1
+            limits:
+              memory: 16Gi
+          volumeMounts:
+            - name: nohate-models-claim
+              mountPath: /mount_dir
+          # Change to secrets
+          env:
+          - name: MYSQL_HOST
+            value: nohate-mysql
+          - name: MYSQL_DB_NAME
+            value: nohate
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: nohate-mysql-secret
+                key: root_password
+      imagePullSecrets:
+        - name:  private-registry-auth
+      volumes:
+        - name: nohate-models-claim
+          persistentVolumeClaim:
+            claimName: nohate-models-claim

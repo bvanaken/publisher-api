@@ -5,4 +5,7 @@ ADD src/ /app/
 RUN pip install Cython --no-cache-dir --compile
 RUN pip install -r /app/requirements.txt --no-cache-dir --compile
 
-CMD python3 /app/app.py /mount_dir/models
+ARG MODEL_DIR=/mount_dir/models
+ENV MODEL_DIR=$MODEL_DIR
+
+CMD python3 /app/app.py $MODEL_DIR

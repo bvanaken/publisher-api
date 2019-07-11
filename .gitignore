@@ -111,4 +111,4 @@ venv.bak/
 
 # ignore large model files
 models/
-k8/
+k8/mysql/mysql-secret.yaml
