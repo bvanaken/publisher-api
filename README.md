@@ -2,7 +2,7 @@
 API and Demo for online user comment analysis
 
 ## Dependencies
-See [requirements.txt](./src/)
+See [requirements.txt](./src/requirements.txt)
 
 ## How to run
 Run app within Kubernetes.
