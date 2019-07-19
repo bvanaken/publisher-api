@@ -8,6 +8,7 @@ import os
 import argparse
 import datetime
 import db
+import urllib.parse
 
 FORMAT = '%(asctime)-15s %(message)s'
 logging.basicConfig(format=FORMAT, level=os.environ.get("LOGLEVEL", "INFO"))
@@ -31,6 +32,9 @@ def get_prediction():
     data = request.get_json()
 
     input_text = data['query']
+
+    # decode input text
+    input_text = urllib.parse.unquote_plus(input_text)
 
     model = data['model'] if 'model' in data else "ft"
     lang = data['lang'] if 'lang' in data else "eng"

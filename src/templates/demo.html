@@ -224,6 +224,7 @@
 
     function predict() {
         let text = $("#input-text").val();
+        text = encodeURIComponent(text);
         text = trim(text);
 
         let model = get_selected_model();
