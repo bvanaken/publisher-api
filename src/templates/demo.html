@@ -152,7 +152,6 @@
         let comment_id = $("#result-text").data("comment_id");
 
         update_label(comment_id, 1);
-        console.log("labeled hate for comment id: " + comment_id);
     }
 
     function label_nohate() {
@@ -164,7 +163,6 @@
         let comment_id = $("#result-text").data("comment_id");
 
         update_label(comment_id, 0);
-        console.log("labeled nohate for comment id: " + comment_id);
     }
 
     function get_selected_model() {
@@ -197,7 +195,7 @@
             },
             dataType: 'json',
             success: function (data) {
-                console.info(data);
+                console.info("Updated comment.");
             }
         });
     }
@@ -205,18 +203,12 @@
     function process_prediction(data) {
         let hate_prob = 0;
         if (data.prediction === "1" || data.prediction === "hate") {
-            console.info("hate");
 
             hate_prob = data.probability;
 
-            console.info(hate_prob);
-
         } else if (data.prediction === "0" || data.prediction === "nohate") {
-            console.info("nohate");
 
             hate_prob = 1 - data.probability;
-
-            console.info(hate_prob);
         }
 
         update_comment_box(hate_prob, data.text, data.comment_id);
@@ -240,8 +232,6 @@
             // Remove quotes from input
             text = text.replace(/\"/g, "'");
 
-            console.log(text);
-
             $.ajax({
                 url: '/nohate/predict',
                 type: 'post',
@@ -251,8 +241,6 @@
                 },
                 dataType: 'json',
                 success: function (data) {
-                    console.info(data);
-
                     process_prediction(data);
                 }
             });

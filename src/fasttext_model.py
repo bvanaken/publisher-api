@@ -11,7 +11,7 @@ def predict(text, lang):
     else:
         model = model_eng
     prediction = model.predict_proba([text])[0][0]
-    print(prediction)
+
     return prediction[0].replace("__label__", ""), prediction[1]
 
 
