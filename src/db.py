@@ -2,16 +2,26 @@ import mysql.connector
 import logging
 import os
 
-nohate_db = mysql.connector.connect(
-    host=os.environ['MYSQL_HOST'],
-    user="root",
-    passwd=os.environ['MYSQL_ROOT_PASSWORD'],
-    database=os.environ['MYSQL_DB_NAME']
-)
-
-cursor = nohate_db.cursor()
-
 logger = logging.getLogger(__name__)
+nohate_db = None
+cursor = None
+
+
+def init():
+    global nohate_db
+    global cursor
+    try:
+        nohate_db = mysql.connector.connect(
+            host=os.environ['MYSQL_HOST'],
+            user="root",
+            passwd=os.environ['MYSQL_ROOT_PASSWORD'],
+            database=os.environ['MYSQL_DB_NAME']
+        )
+        cursor = nohate_db.cursor()
+        return True
+
+    except Exception as err:
+        return False
 
 
 def reconnect(retry_function, *args):

@@ -16,6 +16,7 @@ logging.basicConfig(format=FORMAT, level=os.environ.get("LOGLEVEL", "INFO"))
 logger = logging.getLogger(__name__)
 
 base_route = "/nohate"
+db_connected = False
 
 app = Flask(__name__)
 
@@ -40,7 +41,8 @@ def get_prediction():
     lang = data['lang'] if 'lang' in data else "eng"
 
     current_datetime = datetime.datetime.now()
-    comment_id = db.insert_comment(input_text, current_datetime, lang)
+
+    comment_id = db.insert_comment(input_text, current_datetime, lang) if db_connected else -1
 
     if model == "ft":
         prediction, probability = fasttext_model.predict(input_text, lang)
@@ -74,7 +76,11 @@ def update_label():
     comment_id = data['comment_id']
     label = data['label']
 
-    comment_id = db.update_comment(comment_id, label)
+    if db_connected:
+        comment_id = db.update_comment(comment_id, label)
+    else:
+        comment_id = -1
+        logger.debug("DB not connected. Label update not possible.")
 
     output = {
         'comment_id': comment_id,
@@ -85,6 +91,8 @@ def update_label():
 
 
 def run():
+    global db_connected
+
     parser = argparse.ArgumentParser()
     parser.add_argument("model_dir", help="directory where model files are stored")
     args = parser.parse_args()
@@ -94,6 +102,9 @@ def run():
 
     logger.debug("Init FT model")
     fasttext_model.init(args.model_dir)
+
+    logger.debug("Connect to DB")
+    db_connected = db.init()
 
     logger.debug("Run app")
     waitress.serve(app.run("0.0.0.0", port=1337))

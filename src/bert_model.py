@@ -102,9 +102,10 @@ def init(model_dir):
 
     model_config_file = os.path.join(model_dir, "bert_config.json")
     model_file = os.path.join(model_dir, "bert_large_toxic.bin")
+    cache_dir = os.path.join(model_dir, "tmp")
 
     softmax = torch.nn.Softmax(dim=1)
-    tokenizer = BertTokenizer.from_pretrained(bert_model, do_lower_case=False)
+    tokenizer = BertTokenizer.from_pretrained(bert_model, cache_dir=cache_dir, do_lower_case=False)
 
     model = load_model(model_file, model_config_file)
     model.eval()
