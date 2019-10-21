@@ -1,6 +1,7 @@
 import mysql.connector
 import logging
 import os
+import datetime
 
 logger = logging.getLogger(__name__)
 nohate_db = None
@@ -21,6 +22,7 @@ def init():
         return True
 
     except Exception as err:
+        logger.warning("No database connection possible.")
         return False
 
 
@@ -53,14 +55,15 @@ def duplicate_prev_id(text, lang):
     return None
 
 
-def insert_comment(text, date, lang, label=-1):
+def insert_comment(text, lang, label=-1):
     try:
         duplicate_id = duplicate_prev_id(text, lang)
 
         if duplicate_id is None:
 
+            current_datetime = datetime.datetime.now()
             insert_command = "INSERT INTO comments(text, date, label, lang) VALUES(%s, %s, %s, %s);"
-            row_input = (text, date, label, lang)
+            row_input = (text, current_datetime, label, lang)
             cursor.execute(insert_command, row_input)
             nohate_db.commit()
 
@@ -72,7 +75,7 @@ def insert_comment(text, date, lang, label=-1):
             return duplicate_id
 
     except mysql.connector.errors.DatabaseError:
-        return reconnect(insert_comment, text, date, lang, label)
+        return reconnect(insert_comment, text, lang, label)
 
 
 def update_comment(comment_id, label):

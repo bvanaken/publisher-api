@@ -10,9 +10,14 @@ def predict(text, lang):
         model = model_de
     else:
         model = model_eng
-    prediction = model.predict_proba([text])[0][0]
+    pred_prob = model.predict_proba([text])[0][0]
 
-    return prediction[0].replace("__label__", ""), prediction[1]
+    if pred_prob[0] == "__label__nohate":
+        prediction = "0"
+    else:
+        prediction = "1"
+
+    return prediction, pred_prob[1]
 
 
 def load_model(model_file):

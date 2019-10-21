@@ -1,12 +1,11 @@
-from flask import Flask, request, jsonify, render_template
-from utils import current_milli_time
+from flask import Flask, request, jsonify, render_template, abort
+from utils import current_milli_time, old_api_version
 import bert_model
 import fasttext_model
 import logging
 import waitress
 import os
 import argparse
-import datetime
 import db
 import urllib.parse
 
@@ -15,6 +14,8 @@ logging.basicConfig(format=FORMAT, level=os.environ.get("LOGLEVEL", "INFO"))
 
 logger = logging.getLogger(__name__)
 
+sources = ["demo_app", "browser", "errudite"]
+sources_for_db = ["demo_app", "browser"]
 base_route = "/nohate"
 db_connected = False
 
@@ -32,6 +33,15 @@ def get_prediction():
 
     data = request.get_json()
 
+    if old_api_version(data):
+        return get_prediction_v1(data)
+
+    if "query" not in data:
+        abort(400, {'message': 'No query defined.'})
+
+    if "source" not in data or data["source"] not in sources:
+        abort(400, {'message': 'Source invalid.'})
+
     input_text = data['query']
 
     # decode input text
@@ -40,9 +50,54 @@ def get_prediction():
     model = data['model'] if 'model' in data else "ft"
     lang = data['lang'] if 'lang' in data else "eng"
 
-    current_datetime = datetime.datetime.now()
+    if data["source"] in sources_for_db:
+        comment_id = db.insert_comment(input_text, lang) if db_connected else -1
+    else:
+        comment_id = -1
 
-    comment_id = db.insert_comment(input_text, current_datetime, lang) if db_connected else -1
+    if model == "ft":
+        prediction, probability = fasttext_model.predict(input_text, lang)
+    elif model == "bert" and lang == "eng":
+        prediction, probability = bert_model.predict(input_text)
+    elif model == "bert" and lang == "de":
+        abort(400, {'message': 'Model does not support this language currently.'})
+    else:
+        abort(400, {'message': 'Model name unknown.'})
+
+    logger.debug("prediction: {}".format(prediction))
+    logger.debug("probability: {}".format(probability))
+
+    end_time = current_milli_time()
+
+    logger.debug("Execution time: {} ms".format(end_time - start_time))
+
+    output = {
+        'text': input_text,
+        'prediction': str(prediction),
+        'probability': probability,
+        'comment_id': comment_id,
+        'lang': lang,
+        'model': model
+    }
+
+    return jsonify(output)
+
+
+def get_prediction_v1(data):
+    start_time = current_milli_time()
+
+    if "query" not in data:
+        abort(400, {'message': 'No query defined.'})
+
+    input_text = data['query']
+
+    # decode input text
+    input_text = urllib.parse.unquote_plus(input_text)
+
+    model = data['model'] if 'model' in data else "ft"
+    lang = data['lang'] if 'lang' in data else "eng"
+
+    comment_id = db.insert_comment(input_text, lang) if db_connected else -1
 
     if model == "ft":
         prediction, probability = fasttext_model.predict(input_text, lang)
@@ -70,7 +125,6 @@ def get_prediction():
 
 @app.route(base_route + "/label", methods=['POST'])
 def update_label():
-
     data = request.get_json()
 
     comment_id = data['comment_id']
@@ -107,7 +161,7 @@ def run():
     db_connected = db.init()
 
     logger.debug("Run app")
-    waitress.serve(app.run("0.0.0.0", port=1337))
+    waitress.serve(app.run("localhost", port=1337))
 
 
 if __name__ == '__main__':

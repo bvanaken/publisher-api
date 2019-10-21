@@ -11,21 +11,24 @@ spec:
     spec:
       containers:
         - name: nohate-api
-          image: registry.datexis.com/bvanaken/nohate-api:v1.2
+          image: registry.datexis.com/bvanaken/nohate-api:v1.3
+          command:
+            - /bin/sh
+            - "-c"
+            - "cp /models_dir/bert_model.py /app/;python3 /app/app.py /models_dir"
           imagePullPolicy: Always
           ports:
             - name: client-port
               containerPort: 1337
           resources:
             requests:
-              memory: 10Gi
+              memory: 12Gi
               cpu: 1
             limits:
               memory: 16Gi
           volumeMounts:
-            - name: nohate-models-claim
-              mountPath: /mount_dir
-          # Change to secrets
+            - name: nohate-models-pvc
+              mountPath: /models_dir
           env:
           - name: MYSQL_HOST
             value: nohate-mysql
@@ -39,6 +42,6 @@ spec:
       imagePullSecrets:
         - name:  private-registry-auth
       volumes:
-        - name: nohate-models-claim
+        - name: nohate-models-pvc
           persistentVolumeClaim:
-            claimName: nohate-models-claim
+            claimName: nohate-models-pvc

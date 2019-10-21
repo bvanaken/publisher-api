@@ -1,10 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: nohate-mysql
+  name: nohate-mysql-svc
+  labels:
 spec:
   ports:
-  - port: 3306
+    - port: 3306
+      name: default
+      protocol: TCP
   selector:
-    app: nohate-mysql
-  clusterIP: None
+    app: nohate-api
