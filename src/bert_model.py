@@ -2,7 +2,9 @@ from pytorch_pretrained_bert.tokenization import BertTokenizer
 import torch
 from pytorch_pretrained_bert.modeling import BertForSequenceClassification, BertConfig
 import os
+import requests
 
+bert_german_post_url = "https://demo.datexis.com/nohate-farm-fu/models/2/inference"
 bert_model = "bert-large-cased"
 num_labels = 2
 max_seq_length = 200
@@ -46,20 +48,48 @@ def tokenize(text):
     return input_ids, input_mask, segment_ids
 
 
-def predict(text):
-    input_features = tokenize(text)
+def remote_prediction_german(text):
+    request_data = {"input": [{"text": text}]}
 
-    with torch.no_grad():
-        logits = model(input_features[0], input_features[1], input_features[2])
+    headers = {'Content-Type': 'application/json'}
 
-        _, indices = torch.max(logits, 1)
+    response = requests.request("POST", bert_german_post_url, headers=headers, json=request_data)
 
-        prediction = indices.item()
+    result = response.json()["predictions"][0]
 
-        softmax_result = softmax(logits)
-        probability = softmax_result[0][prediction].item()
+    prediction = result["label"]
+    probability = float(result["probability"])
 
-        return prediction, probability
+    return prediction, probability
+
+
+def predict(text, lang):
+    if lang == "de":
+        return remote_prediction_german(text)
+
+    else:
+
+        input_features = tokenize(text)
+
+        with torch.no_grad():
+            logits = model(input_features[0], input_features[1], input_features[2])
+
+            _, indices = torch.max(logits, 1)
+
+            prediction_index = indices.item()
+
+            softmax_result = softmax(logits)
+            probability = softmax_result[0][prediction_index].item()
+
+            if prediction_index == 0:
+                prediction = "nohate"
+            elif prediction_index == 1:
+                prediction = "hate"
+            else:
+                prediction = "nohate"
+                probability = 0
+
+            return prediction, probability
 
 
 def convert_example_to_features(example, max_seq_length, tokenizer):

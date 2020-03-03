@@ -15,7 +15,7 @@ spec:
           command:
             - /bin/sh
             - "-c"
-            - "cp /models_dir/bert_model.py /app/;python3 /app/app.py /models_dir"
+            - "/app/app.py /models_dir"
           imagePullPolicy: Always
           ports:
             - name: client-port

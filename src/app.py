@@ -50,6 +50,9 @@ def get_prediction():
     model = data['model'] if 'model' in data else "ft"
     lang = data['lang'] if 'lang' in data else "eng"
 
+    if lang != "eng" and lang != "de":
+        abort(400, {'message': 'Language currently not supported.'})
+
     if data["source"] in sources_for_db:
         comment_id = db.insert_comment(input_text, lang) if db_connected else -1
     else:
@@ -57,10 +60,8 @@ def get_prediction():
 
     if model == "ft":
         prediction, probability = fasttext_model.predict(input_text, lang)
-    elif model == "bert" and lang == "eng":
-        prediction, probability = bert_model.predict(input_text)
-    elif model == "bert" and lang == "de":
-        abort(400, {'message': 'Model does not support this language currently.'})
+    elif model == "bert":
+        prediction, probability = bert_model.predict(input_text, lang)
     else:
         abort(400, {'message': 'Model name unknown.'})
 
@@ -97,12 +98,15 @@ def get_prediction_v1(data):
     model = data['model'] if 'model' in data else "ft"
     lang = data['lang'] if 'lang' in data else "eng"
 
+    if lang != "eng" and lang != "de":
+        abort(400, {'message': 'Language currently not supported.'})
+
     comment_id = db.insert_comment(input_text, lang) if db_connected else -1
 
     if model == "ft":
         prediction, probability = fasttext_model.predict(input_text, lang)
     elif model == "bert":
-        prediction, probability = bert_model.predict(input_text)
+        prediction, probability = bert_model.predict(input_text, lang)
     else:
         return
 
@@ -161,7 +165,7 @@ def run():
     db_connected = db.init()
 
     logger.debug("Run app")
-    waitress.serve(app.run("localhost", port=1337))
+    waitress.serve(app.run("localhost", port=1337, threaded=True))
 
 
 if __name__ == '__main__':

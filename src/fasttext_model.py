@@ -12,12 +12,18 @@ def predict(text, lang):
         model = model_eng
     pred_prob = model.predict_proba([text])[0][0]
 
-    if pred_prob[0] == "__label__nohate":
-        prediction = "0"
-    else:
-        prediction = "1"
+    predicted_label = pred_prob[0]
+    probability = pred_prob[1]
 
-    return prediction, pred_prob[1]
+    if predicted_label == "__label__nohate" or predicted_label == "__label__0":
+        prediction = "nohate"
+    elif predicted_label == "__label__hate" or predicted_label == "__label__1":
+        prediction = "hate"
+    else:
+        prediction = "nohate"
+        probability = 0
+
+    return prediction, probability
 
 
 def load_model(model_file):
