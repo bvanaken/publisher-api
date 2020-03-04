@@ -22,7 +22,7 @@ in directory `${MODEL_DIR}` (must be accessible from container)
 
 `CREATE DATABASE nohate;`
 
-`CREATE TABLE comments(id INTEGER AUTO_INCREMENT PRIMARY KEY, text TEXT, date DATETIME, label INTEGER, lang TEXT);`
+`CREATE TABLE comments(id INTEGER AUTO_INCREMENT PRIMARY KEY, text TEXT, date DATETIME, label INTEGER, lang TEXT, source TEXT);`
 
 ### Deploy
 * Deploy app (and required services) with YAML files in [k8](./k8/)
