@@ -11,11 +11,11 @@ spec:
     spec:
       containers:
         - name: nohate-api
-          image: registry.datexis.com/bvanaken/nohate-api:v1.3
+          image: registry.datexis.com/bvanaken/nohate-api:v1.5
           command:
             - /bin/sh
             - "-c"
-            - "/app/app.py /models_dir"
+            - "python /app/app.py /models_dir"
           imagePullPolicy: Always
           ports:
             - name: client-port
@@ -23,7 +23,7 @@ spec:
           resources:
             requests:
               memory: 12Gi
-              cpu: 1
+              cpu: 2
             limits:
               memory: 16Gi
           volumeMounts:

@@ -1,12 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: nohate-api
+  name: nohate-api-service
 spec:
-  type: NodePort
   ports:
     - port: 1337
       name: client-port
-      targetPort: 1337
+      protocol: TCP
   selector:
     app: nohate-api

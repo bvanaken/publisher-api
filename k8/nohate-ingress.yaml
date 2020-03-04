@@ -1,22 +1,22 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: nohate-ingress
+  name: nohate-demo
   labels:
-    app: nohate-ingress
+    app: nohate-demo
   annotations:
     kubernetes.io/ingress.class: nginx
     certmanager.k8s.io/cluster-issuer: letsencrypt
 spec:
   tls:
-  - secretName: "apps-subdomain-tls"
+  - secretName: "nohate-demo-subdomain-tls"
     hosts:
-    - "apps.datexis.com"
+    - "nohate.demo.datexis.com"
   rules:
-  - host: "apps.datexis.com"
+  - host: "nohate.demo.datexis.com"
     http:
       paths:
-      - path: /nohate
+      - path: "/"
         backend:
-          serviceName: nohate-api
+          serviceName: nohate-api-service
           servicePort: 1337

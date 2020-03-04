@@ -165,7 +165,7 @@ def run():
     db_connected = db.init()
 
     logger.debug("Run app")
-    waitress.serve(app.run("localhost", port=1337, threaded=True))
+    waitress.serve(app.run("0.0.0.0", port=1337))
 
 
 if __name__ == '__main__':
