@@ -55,15 +55,15 @@ def duplicate_prev_id(text, lang):
     return None
 
 
-def insert_comment(text, lang, label=-1):
+def insert_comment(text, lang, label=-1, source=None):
     try:
         duplicate_id = duplicate_prev_id(text, lang)
 
         if duplicate_id is None:
 
             current_datetime = datetime.datetime.now()
-            insert_command = "INSERT INTO comments(text, date, label, lang) VALUES(%s, %s, %s, %s);"
-            row_input = (text, current_datetime, label, lang)
+            insert_command = "INSERT INTO comments(text, date, label, lang, source) VALUES(%s, %s, %s, %s, %s);"
+            row_input = (text, current_datetime, label, lang, source)
             cursor.execute(insert_command, row_input)
             nohate_db.commit()
 

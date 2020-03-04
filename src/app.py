@@ -43,6 +43,7 @@ def get_prediction():
         abort(400, {'message': 'Source invalid.'})
 
     input_text = data['query']
+    source = data['source']
 
     # decode input text
     input_text = urllib.parse.unquote_plus(input_text)
@@ -54,7 +55,7 @@ def get_prediction():
         abort(400, {'message': 'Language currently not supported.'})
 
     if data["source"] in sources_for_db:
-        comment_id = db.insert_comment(input_text, lang) if db_connected else -1
+        comment_id = db.insert_comment(input_text, lang, source=source) if db_connected else -1
     else:
         comment_id = -1
 
