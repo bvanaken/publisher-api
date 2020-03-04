@@ -16,7 +16,7 @@ spec:
   - host: "nohate.demo.datexis.com"
     http:
       paths:
-      - path: "/"
+      - path:
         backend:
           serviceName: nohate-api-service
           servicePort: 1337

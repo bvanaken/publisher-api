@@ -30,6 +30,8 @@ spec:
             - name: nohate-models-pvc
               mountPath: /models_dir
           env:
+          - name: GERMAN_BERT_URL
+            value: http://10.96.200.57:5000/nohate-farm-fu/models/2/inference
           - name: MYSQL_HOST
             value: nohate-mysql
           - name: MYSQL_DB_NAME

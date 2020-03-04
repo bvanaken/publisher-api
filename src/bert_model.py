@@ -4,7 +4,6 @@ from pytorch_pretrained_bert.modeling import BertForSequenceClassification, Bert
 import os
 import requests
 
-bert_german_post_url = "https://demo.datexis.com/nohate-farm-fu/models/2/inference"
 bert_model = "bert-large-cased"
 num_labels = 2
 max_seq_length = 200
@@ -53,7 +52,7 @@ def remote_prediction_german(text):
 
     headers = {'Content-Type': 'application/json'}
 
-    response = requests.request("POST", bert_german_post_url, headers=headers, json=request_data)
+    response = requests.request("POST", os.environ['GERMAN_BERT_URL'], headers=headers, json=request_data)
 
     result = response.json()["predictions"][0]
 

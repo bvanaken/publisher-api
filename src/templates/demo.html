@@ -13,7 +13,7 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <style>
-        .btn-keepactive:disabled, .btn-keepactive[disabled]{
+        .btn-keepactive:disabled, .btn-keepactive[disabled] {
             opacity: 1;
         }
     </style>
@@ -92,8 +92,8 @@
         <textarea class="form-control" id="input-text" rows="6"></textarea>
     </div>
     <div class="form-check" style="margin-bottom: 5pt;" hidden>
-    <input type="checkbox" class="form-check-input" id="save-text-checkbox" checked>
-    <small class="form-check-label">Input can be stored for further research</small>
+        <input type="checkbox" class="form-check-input" id="save-text-checkbox" checked>
+        <small class="form-check-label">Input can be stored for further research</small>
     </div>
     <button class="btn btn-primary btn-lg btn-block" onclick="predict()">Predict</button>
     <img id="loading" src="https://media.giphy.com/media/3o7TKtnuHOHHUjR38Y/giphy.gif" width="20" height="20"
@@ -102,8 +102,11 @@
         <div class="card-body" style="background-color: white;margin-top: 40px;">
             <h4 class="card-title pricing-card-title" id="prob"></h4>
             <p id="result-text"></p>
-            <button type="button" id="hate-button" class="btn btn-danger btn-keepactive" onclick="label_hate()">HATE</button>
-            <button type="button" id="nohate-button" class="btn btn-success btn-keepactive" onclick="label_nohate()">NO HATE</button>
+            <button type="button" id="hate-button" class="btn btn-danger btn-keepactive" onclick="label_hate()">HATE
+            </button>
+            <button type="button" id="nohate-button" class="btn btn-success btn-keepactive" onclick="label_nohate()">NO
+                HATE
+            </button>
         </div>
     </div>
 </div>
@@ -130,7 +133,7 @@
         let prev_id = $("#result-text").data("comment_id");
 
         // Only update label buttons if comment is new
-        if(prev_id !== comment_id) {
+        if (prev_id !== comment_id) {
             $("#result-text").data("comment_id", comment_id);
 
             $('#hate-button').text("HATE");
@@ -187,7 +190,7 @@
 
     function update_label(comment_id, label) {
         $.ajax({
-            url: '/nohate/label',
+            url: '/label',
             type: 'post',
             data: "{\"comment_id\": \"" + comment_id + "\", \"label\": \"" + label + "\"}",
             headers: {
@@ -233,9 +236,10 @@
             text = text.replace(/\"/g, "'");
 
             $.ajax({
-                url: '/nohate/predict',
+                url: '/predict',
                 type: 'post',
-                data: "{\"query\": \"" + text + "\", \"model\": \"" + model + "\", \"lang\": \"" + lang + "\"}",
+                data: "{\"version\": \"2\", \"source\": \"demo_app\", \"query\": \"" + text + "\", \"model\": \""
+                    + model + "\", \"lang\": \"" + lang + "\"}",
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -246,16 +250,6 @@
             });
         }
     }
-
-    $(document).ready(function () {
-        // $('#de-radio').click(function () {
-        //     $("#ft-radio").prop('checked', true);
-        //     $("#bert-radio").attr("disabled", true);
-        // });
-        // $('#eng-radio').click(function () {
-        //     $("#bert-radio").removeAttr("disabled");
-        // });
-    });
 </script>
 </body>
 </html>

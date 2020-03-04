@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 sources = ["demo_app", "browser", "errudite"]
 sources_for_db = ["demo_app", "browser"]
-base_route = "/nohate"
+base_route = ""
 db_connected = False
 
 app = Flask(__name__)
