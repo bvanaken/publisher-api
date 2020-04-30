@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
         - name: nohate-api
-          image: registry.datexis.com/bvanaken/nohate-api:v1.5
+          image: registry.datexis.com/bvanaken/nohate-api:v1.6
           command:
             - /bin/sh
             - "-c"
@@ -23,7 +23,7 @@ spec:
           resources:
             requests:
               memory: 12Gi
-              cpu: 2
+              cpu: 8
             limits:
               memory: 16Gi
           volumeMounts:
@@ -31,7 +31,9 @@ spec:
               mountPath: /models_dir
           env:
           - name: GERMAN_BERT_URL
-            value: http://10.96.200.57:5000/nohate-farm-fu/models/2/inference
+            value: http://10.111.5.73:5000/nohate-farm-fu/models/2/inference
+          - name: GERMAN_TARGET_URL
+            value: https://nohate-targets.demo.datexis.com
           - name: MYSQL_HOST
             value: nohate-mysql
           - name: MYSQL_DB_NAME

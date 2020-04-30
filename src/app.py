@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template, abort
 from utils import current_milli_time, old_api_version
 import bert_model
 import fasttext_model
+import target_model
 import logging
 import waitress
 import os
@@ -25,6 +26,35 @@ app = Flask(__name__)
 @app.route(base_route + "/")
 def index():
     return render_template("demo.html")
+
+
+@app.route(base_route + "/predict_target", methods=['POST'])
+def get_target_prediction():
+    start_time = current_milli_time()
+
+    data = request.get_json()
+
+    if "query" not in data:
+        abort(400, {'message': 'No query defined.'})
+
+    input_text = data['query']
+    input_text = urllib.parse.unquote_plus(input_text)
+    target, target_probability = target_model.predict_target(input_text)
+
+    logger.debug("target: {}".format(target))
+    logger.debug("target_probability: {}".format(target_probability))
+
+    end_time = current_milli_time()
+
+    logger.debug("Execution time: {} ms".format(end_time - start_time))
+
+    output = {
+        'text': input_text,
+        'prediction': target,
+        'probability': target_probability,
+    }
+
+    return jsonify(output)
 
 
 @app.route(base_route + "/predict", methods=['POST'])
